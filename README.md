@@ -8,7 +8,7 @@ A simple media player built from the ground up using ideas found in many other s
 ![](https://i.ibb.co/HVRWSqL/player.png)
 
 ## Quick Start
-* Once installed run the Cover skin
+* Once installed (https://github.com/Fosmos/Simply/releases) run the Cover skin
 * Right-Click the skin and select 'Settings'
 * When you are satisfied with the settings select 'Apply' and your changes should be reflected
   - Chameleon Colors is currently in development so you can't change it's status
