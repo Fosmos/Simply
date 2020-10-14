@@ -15,10 +15,14 @@ A simple media player built from the ground up using ideas found in many other s
   - 'Spotify' uses the WebNowPlaying plugin and will only work with spotify open in a browser or using the .exe desktop app (more on this further down)
 * That's it, everything should be working now 😄
 ## Features
-* See the album cover of the current playing track when hovering over the skin
-* Select your prefered media player (See supported players)
-* Smoothly animated skin keeps things modern and clean
-* See the progress of the song with a colored progress bar (colors match album cover)
+* Supports multiple media players
+* Album cover slides into view when hovering over skin
+* Progress bar (Colors match album cover)
+* Media controls
+* Ability to 💚 songs
+
+![](https://i.ibb.co/yknzsGG/player-animated.gif)
+
 ## Supported Players
 * Google Music Desktop Player (aka → GPMDP)
   - Fully supported and tested
