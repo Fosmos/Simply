@@ -1,3 +1,6 @@
+; I strongly advise touching nothing in here
+; Except maybe the font stuff
+; Everything else should be changed through the Settings dialog
 [Variables]
 playerName=Spotify
 playerPlugin=Web
@@ -13,7 +16,7 @@ FontMain=Ubuntu Medium
 FontLight=Ubuntu Light
 
 ; Cover Variables
-CoverSize=100
+CoverSize=125
 Width=(#CoverSize#*7)
 Origin=(#CoverSize#*6)
 ImageTint2=[MeasurerBackground]
@@ -26,8 +29,6 @@ likeVal=SetRating 5
 noLikeVal=SetRating 0
 heartTint=1DB954
 
-; --DANGEROUS--
-; !!! only change "Config" if you renamed the skin file/location !!!
 SkinGroup=Simply
 Config=Simply
 Channel=

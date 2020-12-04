@@ -27,6 +27,7 @@ UpdateDivider=20
 Measure=NowPlaying
 PlayerName=[MeasureTitle]
 PlayerType=Cover
+CoverPath=#@#images\coverNowPlaying.png
 Substitute="":"#@#images\#ImageName#"
 UpdateDivider=20
 

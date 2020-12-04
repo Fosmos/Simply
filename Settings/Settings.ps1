@@ -13,7 +13,7 @@ foreach ($line in $raw)
     }
 }
 
-if ($v["playerName"] -eq "") { $v["playerName"]='Spotify'}
+if ($v["playerName"] -eq "") { $v["playerName"]='Spotify' }
 if ($v["playerName"] -eq "Spotify" -AND $v["playerPlugin"] -eq "NowPlaying") { $v["playerName"]="Spotify (Now Playing)" }
 $rmPath = (Get-Process "Rainmeter").Path
 & $rmPath !ActivateConfig "Simply\Dummy" "Dummy.ini"
