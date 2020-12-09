@@ -103,7 +103,7 @@ Add-Type -ReferencedAssemblies $assemblies -TypeDefinition $psforms -Language CS
 
 # Window Settings
 $form                               = New-Object system.Windows.Forms.Form
-$form.ClientSize                    = '260,150'
+$form.ClientSize                    = '260,175'
 $form.text                          = $v["Config"]
 $form.TopMost                       = $false
 $form.Icon                          = [Drawing.Icon]::ExtractAssociatedIcon($rmPath)
@@ -175,8 +175,17 @@ $form.Font                          = 'Arial,9'
     $cbOri.location                 = New-Object System.Drawing.Point(150,93)
     $cbOri.Font                     = 'Microsoft Sans Serif,8'
     $cbOri.DropDownStyle            = 'DropDownList'
-    $cbOri.Items.AddRange(@('Left','Right')) #,'Center (WIP)'))
-    $cbOri.SelectedItem             = $v["Direction"]
+    $cbOri.Items.AddRange(@('Horizontal','Vertical')) #,'Center (WIP)'))
+    $cbOri.SelectedItem             = $v["Orientation"]
+
+    # Info Direction
+    $cbDir                          = New-Object system.Windows.Forms.CheckBox
+    $cbDir.text                     = "Invert Direction"
+    $cbDir.AutoSize                 = $true
+    $cbDir.width                    = 100
+    $cbDir.height                   = 20
+    $cbDir.location                 = New-Object System.Drawing.Point(10,115)
+    $cbDir.Checked                  = [int]$v["Direction"]
 ### <MediaPlayer/>
 
 # Apply Button
@@ -184,7 +193,7 @@ $btnApply                           = New-Object system.Windows.Forms.Button
 $btnApply.text                      = "Apply"
 $btnApply.width                     = 240
 $btnApply.height                    = 30
-$btnApply.location                  = New-Object System.Drawing.Point(10,115)
+$btnApply.location                  = New-Object System.Drawing.Point(10,135)
 $btnApply.Add_Click({ applyClick })
 
 ### <Helper Functions> ###
@@ -254,16 +263,27 @@ $btnApply.Add_Click({ applyClick })
         # Set the media player data
         MediaPlayer
 
+        $doInvert = [int]$cbDir.Checked
+        WriteKeyValue Direction $doInvert
+
         # Set the direction
-        WriteKeyValue Direction $cbOri.SelectedItem
-        if ($cbOri.SelectedItem.equals("Center (WIP)")) {
-            & $rmPath !DeactivateConfig "Simply"
-            & $rmPath !ActivateConfig "Simply\@Resources\Assets" "Center.ini"
+        WriteKeyValue Orientation $cbOri.SelectedItem
+        if ($cbOri.SelectedItem.equals("Vertical")) {
+            WriteKeyValue Justify "Center"
+            WriteKeyValue Origin "(#Width#*0.5)"
+            WriteKeyValue CoverOrigin "(#Origin#-#CoverSize#*0.5)"
         } else 
         {
-            & $rmPath !ActivateConfig "Simply"
-            if ($cbOri.SelectedItem.equals("Left")) { WriteKeyValue Origin 0 }
-            else { WriteKeyValue Origin "(#CoverSize#*6)" }
+            if ($cbDir.Checked) { 
+                WriteKeyValue Justify "Right"
+                WriteKeyValue Origin "(#CoverSize#*6)"
+            }
+            else { 
+                WriteKeyValue Justify "Left"
+                WriteKeyValue Origin 0
+            }
+
+            WriteKeyValue CoverOrigin "#Origin#"
         }
 
         # Set the cover size
@@ -274,7 +294,7 @@ $btnApply.Add_Click({ applyClick })
     }
 ### <HelperFunctions/> ###
 
-$form.controls.AddRange(@($lblPlayer,$cbPlayer,$cbChameleon,$lblOri,$cbOri,$lblImageSize,$numImageSize,$btnApply))
+$form.controls.AddRange(@($lblPlayer,$cbPlayer,$cbChameleon,$lblOri,$cbOri,$lblImageSize,$numImageSize,$cbDir,$btnApply))
 
 $form.ResumeLayout()
 

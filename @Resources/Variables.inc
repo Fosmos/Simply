@@ -6,7 +6,8 @@ playerName=Spotify
 playerPlugin=Web
 playerEXE=%userprofile%\AppData\Roaming\Spotify\Spotify.exe
 ImageName=spotify.png
-Direction=Right
+Direction=1
+Orientation=Horizontal
 
 ; Song Info Variables
 FontSmall=0.25
@@ -14,11 +15,14 @@ FontLarge=0.35
 FontColor=255,255,255,255
 FontMain=Ubuntu Medium
 FontLight=Ubuntu Light
+Justify=Right
 
 ; Cover Variables
 CoverSize=125
 Width=(#CoverSize#*7)
+Height=(#CoverSize#)
 Origin=(#CoverSize#*6)
+CoverOrigin=#Origin#
 ImageTint2=[MeasurerBackground]
 Background=[MeasureBackground2]
 Foreground=[MeasureForeground2]
