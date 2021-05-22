@@ -39,6 +39,7 @@ A simple media player built from the ground up using ideas found in many other s
   - This should work right out of the box with spotify loaded in a browser that has the rainmeter plugin (see Web for more detail)
   - If using the .exe (not the store app) following this guide: https://github.com/marcopixel/Monstercat-Visualizer/wiki/WebNowPlaying-Spotify
   - Once above steps are completed, player is fully supported
+
 More media players will be added as needed (let me know if you want one added)
 ## What Not To Touch
 * You shouldn't have to touch anything in the Variables folder and most of the setting get overidden by the settings window anyway
