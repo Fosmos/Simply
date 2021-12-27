@@ -28,7 +28,7 @@ Plugin=WebNowPlaying
 PlayerType=Title
 RegExpSubstitute=1
 ;; Removes anything with () or [] 
-Substitute="^(?siU)^(.+) ((-|\/|(\(|\[).*()).+)+$":"\1"
+Substitute="^(?siU)^(.+) (-.*?(#REGEX#).*|(\(.*(#REGEX#)|\[.*(#REGEX#)).+)+$":"\1"
 UpdateDivider=20
 
 [MeasureTrackFull]

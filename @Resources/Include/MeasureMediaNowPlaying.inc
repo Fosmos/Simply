@@ -36,7 +36,7 @@ Measure=NowPlaying
 PlayerName=[MeasureTitle]
 PlayerType=Title
 RegExpSubstitute=1
-Substitute="^(?siU)^(.+) ((-|\/|(\(|\[).*()).+)+$":"\1"
+Substitute="^(?siU)^(.+) (-.*?(#REGEX#).*|(\(.*(#REGEX#)|\[.*(#REGEX#)).+)+$":"\1"
 UpdateDivider=20
 
 [MeasureTrackFull]
@@ -50,7 +50,7 @@ Measure=NowPlaying
 PlayerName=[MeasureTitle]
 PlayerType=Artist
 RegExpSubstitute=1
-Substitute="^(?siU)^(.+) ((-|,|& (?!\bcountry\b|\bfree\b)|feat.|and|:|\/).+)+$":"\1"
+Substitute="^(?siU)^(.+)((,| -| & (?!\bcountry\b|\bfree\b)| feat.| and| :| \/).+)+$":"\1"
 UpdateDivider=20
 
 [MeasureArtistFull]

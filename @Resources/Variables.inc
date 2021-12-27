@@ -16,6 +16,7 @@ FontColor=255,255,255,255
 FontMain=Ubuntu Medium
 FontLight=Ubuntu Light
 Justify=Right
+REGEX="From|Feat|Acoustic Version|EP|With|Album Version|Writing Session|Medley|Single|Take|Solo|\+"
 
 ; Cover Variables
 CoverSize=125

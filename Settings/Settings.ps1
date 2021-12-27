@@ -129,7 +129,7 @@ $form.Font                          = 'Arial,9'
     $cbPlayer.location              = New-Object System.Drawing.Point(150,8)
     $cbPlayer.Font                  = 'Microsoft Sans Serif,8'
     $cbPlayer.DropDownStyle         = 'DropDownList'
-    $cbPlayer.Items.AddRange(@('Spotify','Spotify (Now Playing)','GPMDP','Web','WMP','iTunes'))
+    $cbPlayer.Items.AddRange(@('Spotify','Spotify (Now Playing)','Web','WMP','iTunes'))
     $cbPlayer.SelectedItem          = $v["playerName"]
 
     # Chameleon Colors
@@ -223,35 +223,25 @@ $btnApply.Add_Click({ applyClick })
             # This is the WebNowPlaying version of Spotify
             WriteKeyValue playerPlugin 'Web'
 
-        } 
-        elseif ($cbPlayer.SelectedItem.equals("GPMDP"))
-        {
-            WriteKeyValue playerName 'GPMDP'
-            WriteKeyValue playerPlugin 'GPMDP'
-            WriteKeyValue playerEXE '%userprofile%\AppData\Local\GPMDP_3\app-4.7.1\Google Play Music Desktop Player.exe'
-            WriteKeyValue ImageName 'gpmdp.png'
-            WriteKeyValye likeVal "ToggleThumbsUp"
-            WriteKeyValue noLikeVal "ToggleThumbsUp"
-            WriteKeyValue heartTint F8562C    
         } elseif ($cbPlayer.SelectedItem.equals("Web"))
         {
             WriteKeyValue playerName 'Web'
             WriteKeyValue playerPlugin 'Web'
             WriteKeyValue playerEXE ''
             WriteKeyValue ImageName 'Web.png'
-            WriteKeyValue heartTint 2870B8    
+            WriteKeyValue heartTint 2870B8
         } elseif ($cbPlayer.SelectedItem.equals("WMP"))
         {
             WriteKeyValue playerName 'WMP'
             WriteKeyValue playerEXE 'wmplayer.exe'
             WriteKeyValue ImageName 'WMP.png'
-            WriteKeyValue heartTint 2870B8    
+            WriteKeyValue heartTint 2870B8
         } elseif ($cbPlayer.SelectedItem.equals("iTunes"))
         {
             WriteKeyValue playerName 'iTunes'
             WriteKeyValue playerEXE 'iTunes.exe'
             WriteKeyValue ImageName 'itunes.png'
-            WriteKeyValue heartTint D3D3D3    
+            WriteKeyValue heartTint D3D3D3
         }
     }
 
