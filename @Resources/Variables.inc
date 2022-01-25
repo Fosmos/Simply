@@ -8,6 +8,7 @@ playerEXE=%userprofile%\AppData\Roaming\Spotify\Spotify.exe
 ImageName=spotify.png
 Direction=1
 Orientation=Horizontal
+AutoHide=1
 
 ; Song Info Variables
 FontSmall=0.25
@@ -28,6 +29,11 @@ ImageTint2=[MeasurerBackground]
 Background=[MeasureBackground2]
 Foreground=[MeasureForeground2]
 Chameleon=1
+
+; --- Don't Touch!! ---
+
+; Media Controls
+Alpha=251
 
 ; Heart
 likeVal=SetRating 5

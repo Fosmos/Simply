@@ -186,6 +186,15 @@ $form.Font                          = 'Arial,9'
     $cbDir.height                   = 20
     $cbDir.location                 = New-Object System.Drawing.Point(10,115)
     $cbDir.Checked                  = [int]$v["Direction"]
+
+    # AutoHide
+    $cbHide                         = New-Object System.Windows.Forms.CheckBox
+    $cbHide.text                    = "Auto-Hide Cover"
+    $cbHide.AutoSize                = $true
+    $cbHide.width                   = 100
+    $cbHide.height                  = 20
+    $cbHide.location                = New-Object System.Drawing.Point(138, 115)
+    $cbHide.Checked                 = [int]$v["autohide"]
 ### <MediaPlayer/>
 
 # Apply Button
@@ -245,7 +254,7 @@ $btnApply.Add_Click({ applyClick })
         }
     }
 
-    function applyClick 
+    function applyClick
     {
         #$doChameleon = [int]$cbChameleon.Checked
         #WriteKeyValue Chameleon $doChameleon
@@ -262,13 +271,13 @@ $btnApply.Add_Click({ applyClick })
             WriteKeyValue Justify "Center"
             WriteKeyValue Origin "(#Width#*0.5)"
             WriteKeyValue CoverOrigin "(#Origin#-#CoverSize#*0.5)"
-        } else 
+        } else
         {
-            if ($cbDir.Checked) { 
+            if ($cbDir.Checked) {
                 WriteKeyValue Justify "Right"
                 WriteKeyValue Origin "(#CoverSize#*6)"
             }
-            else { 
+            else {
                 WriteKeyValue Justify "Left"
                 WriteKeyValue Origin 0
             }
@@ -279,12 +288,15 @@ $btnApply.Add_Click({ applyClick })
         # Set the cover size
         WriteKeyValue CoverSize $numImageSize.Value
 
+        $doHide = [int]$cbHide.Checked
+        WriteKeyValue autohide $doHide
+
         # Refresh the skin
         & $rmPath !RefreshGroup "Simply"
     }
 ### <HelperFunctions/> ###
 
-$form.controls.AddRange(@($lblPlayer,$cbPlayer,$cbChameleon,$lblOri,$cbOri,$lblImageSize,$numImageSize,$cbDir,$btnApply))
+$form.controls.AddRange(@($lblPlayer,$cbPlayer,$cbChameleon,$lblOri,$cbOri,$lblImageSize,$numImageSize,$cbDir,$cbHide,$btnApply))
 
 $form.ResumeLayout()
 
