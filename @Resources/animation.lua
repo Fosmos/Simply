@@ -1,4 +1,5 @@
 function Initialize()
+    print("init")
     coverSize   = tonumber(SKIN:GetVariable('CoverSize')) -- User specified skin size
     skinwidth   =  coverSize * 7 -- Since the 'Width' variable has a variable in it, Lua can't get that number so I'm harcoding it here
     divider     = 5 -- Update speed
@@ -26,150 +27,153 @@ function Initialize()
         count = 12
     end
 
-    meter   = {} -- Will hold meter objects
-    hidden  = {} -- The position to go to when the player is in 'hidden' state
-    pos     = {} -- Current position for each meter object
-    home    = {} -- The 'home' position of each meter object
+    meterObjs  = {} -- Will hold meter objects
+    hover      = {} -- The position to go to when the player is in 'hover' state
+    notHover   = {} -- The 'notHover' position of each meter
+    hidden     = {} -- Position to completely hide the meter
+    pos        = {} -- Current position for each meter object
 
     -- Populate all the tables
     for i=1, count do
-        meter[i] = SKIN:GetMeter(meters[i]) -- Get the meter object
-        if meter == nil then SKIN:Bang('!Refresh') end 
+        meter = SKIN:GetMeter(meters[i]) -- Get the meter object
+        if meter == nil then SKIN:Bang("!Refresh") end
+        meterObjs[i] = meter
 
+        -- Horizontal
         if orientation == "Horizontal" then
-            -- Horizontal
-            if table_contains(importantMeters, meter[i]:GetName()) then
+            -- Song info and progress bars
+            if table_contains(importantMeters, meter:GetName()) then
                 -- Direction is Right
                 if direction == 1 then
-                    -- Set the home (with some padding)
-                    home[i] = skinwidth * 0.98
+                    -- Set the notHover (with some padding)
+                    notHover[i] = skinwidth * 0.98
 
-                    if meter[i]:GetName() == "ProgressBar" then
+                    if meter:GetName() == "ProgressBar" then
                         -- Give the progress bar less padding (so it doesn't touch the text)
-                        home[i] = skinwidth * 0.99
+                        notHover[i] = skinwidth * 0.99
                     end
                 -- Direction is Left
                 else
-                    home[i] = coverSize * 0.2
+                    notHover[i] = coverSize * 0.2
 
-                    if meter[i]:GetName() == "ProgressBar" then
-                        home[i] = coverSize * 0.1
+                    if meter:GetName() == "ProgressBar" then
+                        notHover[i] = coverSize * 0.1
                     end
                 end
 
                 -- Position to shift info towards
-                hidden[i] = home[i] - (coverSize*direction)
+                hover[i] = notHover[i] - (coverSize*direction)
+            -- Cover and media controls
             else
                 -- All the other objects
-                if direction == 1 then 
-                    hidden[i] = skinwidth + 1   -- Shift the elements right
-                else 
-                    hidden[i] = -(coverSize + 1)  -- Shift them left
+                if direction == 1 then
+                    notHover[i] = skinwidth + 1 -- Shift the elements right
+                else
+                    notHover[i] = -(coverSize + 1) -- Shift them left
                 end
 
-                -- Set the home
-                home[i] = meter[i]:GetX()
+                hover[i] = meter:GetX()
             end
-            pos[i] = hidden[i]
-        else
-            home[i] = meter[i]:GetY() -- Get starting position as home
-            pos[i]  = home[i]
 
-            if table_contains(importantMeters, meter[i]:GetName()) then
-                hidden[i] = (coverSize + 1)*direction
+            hidden[i] = skinwidth * 2 * direction
+        -- Vertical
+        else
+            -- Song info and progress bars
+            if table_contains(importantMeters, meter:GetName()) then
+                notHover[i] = meter:GetY()
+                hover[i]    = (coverSize + 1)*direction
+                hidden[i]   = hover[i]
+            -- Cover and media controls
             else
-                hidden[i] = (-coverSize - 1)*direction
+                notHover[i] = (-coverSize - 1)*direction
+                hover[i]    = meter:GetY()
+                hidden[i]   = notHover[i]
             end
+
         end
+
+        -- Floor everything
+        notHover[i] = math.floor(notHover[i])
+        hover[i]    = math.floor(hover[i])
+        hidden[i]   = math.floor(hidden[i])
+
+        -- Set the position
+        pos[i] = notHover[i]
+        UpdatePos(meter, i)
     end
 end
 
 function animate()
     for i=1, count do
+        meter = meterObjs[i]
+        if meter == nil then print("nil") end
+
+        update = true
+
         -- Auto Hide
         if hidecover == 1 then
             -- Only show the info
             if state == "playing" then
-                if table_contains(importantMeters, meter[i]:GetName()) then
-                    -- Push it back to its home position
-                    pos[i] = pos[i] - (pos[i] - home[i])/divider
-                else
-                    -- Push the cover to its hidden position
-                    pos[i] = pos[i] - (pos[i] - hidden[i])/divider
-                end
+                update = InterpTowardNotHover(i)
             -- Show everything
             elseif state == "playing_Hover" then
-                if table_contains(importantMeters, meter[i]:GetName()) then
-                    pos[i] = pos[i] - (pos[i] - hidden[i])/divider
-                else
-                    pos[i] = pos[i] - (pos[i] - home[i])/divider
-                end
+                update = InterpTowardHover(i)
             -- Only show the cover
             elseif state == "paused_Hover" then
-                if not table_contains(importantMeters, meter[i]:GetName()) then
-                    pos[i]= pos[i] - (pos[i] - home[i])/divider
+                -- TODO: This state forever updates
+                if not table_contains(importantMeters, meter:GetName()) then
+                    update = InterpTowardHover(i)
                 end
             -- Hide everything
             else
-                if table_contains(importantMeters, meter[i]:GetName()) then
-                    if orientation == "Vertical" then
-                        pos[i]= pos[i] - (pos[i] + hidden[i] - 1)/divider
-                    else
-                        pos[i]= pos[i] - (pos[i] - (skinwidth*2*direction))/divider
-                    end
-                else
-                    pos[i]= pos[i] - (pos[i] - hidden[i])/divider
-                end
+                update = InterpTowardHidden(i)
             end
         -- No Auto-Hide
         else
+            -- Show everything while playing
             if state == "playing" or state == "playing_Hover" then
-                if table_contains(importantMeters, meter[i]:GetName()) then
-                    pos[i] = pos[i] - (pos[i] - hidden[i])/divider
-                else
-                    pos[i] = pos[i] - (pos[i] - home[i])/divider
-                end
+                update = InterpTowardHover(i)
+            -- Paused states
             else
-                if table_contains(importantMeters, meter[i]:GetName()) then
-                    if orientation == "Vertical" then
-                        pos[i]= pos[i] - (pos[i] + hidden[i] - 1)/divider
-                    else
-                        pos[i]= pos[i] - (pos[i] - (skinwidth*2*direction))/divider
-                    end
+                -- Hide the song info
+                if table_contains(importantMeters, meter:GetName()) then
+                    update = InterpTowardHidden(i)
+                -- Show the cover and media controls
                 else
-                    pos[i] = pos[i] - (pos[i] - home[i])/divider
+                    update = InterpTowardHover(i)
                 end
             end
         end
 
-        if table_contains(mediaControls, meter[i]:GetName()) then
-            fade(meter[i])
+        if table_contains(mediaControls, meter:GetName()) then
+            fade(meter)
         end
 
-        if (orientation == "Vertical") then 
-            meter[i]:SetY(pos[i])
-        else 
-            meter[i]:SetX(pos[i]) 
+        -- If the position was changed, then write it to the
+        -- meter, otherwise don't waste time doing it
+        if update then
+            -- print("updating...")
+            UpdatePos(meter, i)
         end
     end
 end
 
-function setState(isInfo)
+function setState(isHover)
     -- Mouse off of skin
-    if isInfo == 0 then
+    if isHover == 0 then
+        state = 'playing'
+
         -- Music not playing
         if playpause:GetValue() == 2 then
             state = 'paused'
-        else
-            state = 'playing'
         end
     -- Mouse over skin
     else
+        state = 'playing_Hover'
+
         if playpause:GetValue() == 2 then
             state = 'paused_Hover'
-        else
-            state = 'playing_Hover'
-        end 
+        end
     end
 end
 
@@ -197,19 +201,18 @@ function table_contains(table, element)
     return false
 end
 
-
-function fade(fademeter)
-    if fademeter:GetName() == 'MeterCover' then
-        ApplyTintToCover(fademeter)
+function fade(meter)
+    if meter:GetName() == 'MeterCover' then
+        ApplyTintToCover(meter)
         return
     end
 
     alpha = 255
 
-    if fademeter:GetName() == 'MeterPosition' or fademeter:GetName() == 'MeterDuration' then
-        alpha = tonumber(string.match(fademeter:GetOption('FontColor', '255,255,255,255'), ',(%w+)$'))
+    if meter:GetName() == 'MeterPosition' or meter:GetName() == 'MeterDuration' then
+        alpha = tonumber(string.match(meter:GetOption('FontColor', '255,255,255,255'), ',(%w+)$'))
     else
-        alpha = tonumber(fademeter:GetOption("ImageAlpha", '255'))
+        alpha = tonumber(meter:GetOption("ImageAlpha", '255'))
     end
 
     if state == "playing_Hover" or state == "paused_Hover" then
@@ -222,10 +225,10 @@ function fade(fademeter)
         alpha = alpha - 15
     end
 
-    if fademeter:GetName() == 'MeterPosition' or fademeter:GetName() == 'MeterDuration' then
-        SKIN:Bang('!SetOption', fademeter:GetName(), 'FontColor', "255,255,255,"..alpha)
+    if meter:GetName() == 'MeterPosition' or meter:GetName() == 'MeterDuration' then
+        SKIN:Bang('!SetOption', meter:GetName(), 'FontColor', "255,255,255,"..alpha)
     else
-        SKIN:Bang('!SetOption', fademeter:GetName(), 'ImageAlpha', alpha)
+        SKIN:Bang('!SetOption', meter:GetName(), 'ImageAlpha', alpha)
     end
 end
 
@@ -241,4 +244,54 @@ function ApplyTintToCover(cover)
     end
 
     SKIN:Bang('!SetOption', cover:GetName(), 'ImageTint', tint..","..tint..","..tint..",255")
+end
+
+function InterpTowardNotHover(i)
+    if pos[i] == notHover[i] then return false end
+
+    pos[i] = pos[i] - (pos[i] - notHover[i])/divider
+
+    if math.abs(notHover[i] - pos[i]) < .5 then
+        pos[i] = notHover[i]
+    end
+
+    -- print(i .. ": " .. pos[i] .. " -> " .. notHover[i])
+
+    return true
+end
+
+function InterpTowardHover(i)
+    if pos[i] == hover[i] then return false end
+
+    pos[i] = pos[i] - (pos[i] - hover[i])/divider
+
+    if math.abs(hover[i] - pos[i]) < .5 then
+        pos[i] = hover[i]
+    end
+
+    -- print(i .. ": " .. pos[i] .. " -> " .. hover[i])
+
+    return true
+end
+
+function InterpTowardHidden(i)
+    if pos[i] == hidden[i] then return false end
+
+    pos[i] = pos[i] - (pos[i] - hidden[i])/divider
+
+    if math.abs(hidden[i] - pos[i]) < .5 then
+        pos[i] = hidden[i]
+    end
+
+    -- print(i .. ": " .. pos[i] .. " -> " .. hidden[i])
+
+    return true
+end
+
+function UpdatePos(meter, i)
+    if (orientation == "Horizontal") then
+        meter:SetX(pos[i])
+    else
+        meter:SetY(pos[i])
+    end
 end
