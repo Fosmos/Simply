@@ -1,5 +1,4 @@
 function Initialize()
-    print("init")
     coverSize   = tonumber(SKIN:GetVariable('CoverSize')) -- User specified skin size
     skinwidth   =  coverSize * 7 -- Since the 'Width' variable has a variable in it, Lua can't get that number so I'm harcoding it here
     divider     = 5 -- Update speed
@@ -36,7 +35,6 @@ function Initialize()
     -- Populate all the tables
     for i=1, count do
         meter = SKIN:GetMeter(meters[i]) -- Get the meter object
-        if meter == nil then SKIN:Bang("!Refresh") end
         meterObjs[i] = meter
 
         -- Horizontal
@@ -106,7 +104,6 @@ end
 function animate()
     for i=1, count do
         meter = meterObjs[i]
-        if meter == nil then print("nil") end
 
         update = true
 

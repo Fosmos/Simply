@@ -31,10 +31,6 @@ Foreground=[MeasureForeground2]
 Chameleon=1
 
 ; --- Don't Touch!! ---
-
-; Media Controls
-Alpha=251
-
 ; Heart
 likeVal=SetRating 5
 noLikeVal=SetRating 0
