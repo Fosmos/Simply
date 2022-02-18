@@ -18,11 +18,21 @@ function Initialize()
     if orientation ~= "Vertical" then
         -- Only 1 progress bar in horizontal mode
         table.insert(meters, 'ProgressBar')
+
+        SKIN:Bang('!SetOption', 'ProgressBar', 'DynamicVariables', 1)
+        SKIN:Bang('!SetOption', 'ProgressBar', 'UpdateDivider', 20)
+
         count = 11
     else
         -- 2 in vertical mode
         table.insert(meters, 'ProgressBarR')
         table.insert(meters, 'ProgressBarL')
+
+        SKIN:Bang('!SetOption', 'ProgressBarR', 'DynamicVariables', 1)
+        SKIN:Bang('!SetOption', 'ProgressBarR', 'UpdateDivider', 20)
+        SKIN:Bang('!SetOption', 'ProgressBarL', 'DynamicVariables', 1)
+        SKIN:Bang('!SetOption', 'ProgressBarL', 'UpdateDivider', 20)
+
         count = 12
     end
 
@@ -60,7 +70,8 @@ function Initialize()
                 end
 
                 -- Position to shift info towards
-                hover[i] = notHover[i] - (coverSize*direction)
+                hover[i]  = notHover[i] - (coverSize*direction)
+                hidden[i] = skinwidth * 2 * direction
             -- Cover and media controls
             else
                 -- All the other objects
@@ -71,9 +82,8 @@ function Initialize()
                 end
 
                 hover[i] = meter:GetX()
+                hidden[i] = notHover[i]
             end
-
-            hidden[i] = skinwidth * 2 * direction
         -- Vertical
         else
             -- Song info and progress bars
@@ -117,7 +127,6 @@ function animate()
                 update = InterpTowardHover(i)
             -- Only show the cover
             elseif state == "paused_Hover" then
-                -- TODO: This state forever updates
                 if not table_contains(importantMeters, meter:GetName()) then
                     update = InterpTowardHover(i)
                 end
@@ -170,6 +179,18 @@ function setState(isHover)
 
         if playpause:GetValue() == 2 then
             state = 'paused_Hover'
+        end
+    end
+end
+
+function updatePaused()
+    if playpause:GetValue() == 2 then
+        if state ~= 'paused_Hover' then
+            state = 'paused'
+        end
+    else
+        if state ~= 'playing_Hover' then
+            state = 'playing'
         end
     end
 end
@@ -227,6 +248,8 @@ function fade(meter)
     else
         SKIN:Bang('!SetOption', meter:GetName(), 'ImageAlpha', alpha)
     end
+
+    SKIN:Bang("!UpdateMeter", meter:GetName())
 end
 
 function ApplyTintToCover(cover)
@@ -241,6 +264,7 @@ function ApplyTintToCover(cover)
     end
 
     SKIN:Bang('!SetOption', cover:GetName(), 'ImageTint', tint..","..tint..","..tint..",255")
+    SKIN:Bang('!UpdateMeter', cover:GetName())
 end
 
 function InterpTowardNotHover(i)
@@ -291,4 +315,6 @@ function UpdatePos(meter, i)
     else
         meter:SetY(pos[i])
     end
+
+    SKIN:Bang("!UpdateMeter", meter:GetName())
 end

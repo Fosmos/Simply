@@ -101,119 +101,272 @@ public static extern bool WritePrivateProfileString(string lpAppName,
 $wpps = Add-Type -MemberDefinition $wppsdef -Name WinWritePrivateProfileString -Namespace Win32Utils -PassThru
 Add-Type -ReferencedAssemblies $assemblies -TypeDefinition $psforms -Language CSharp
 
+# Variables
+$defaultFontAlign = 'MiddleLeft'
+$colorObjectCount = 4
+
+## Debug Helper
+function print($message) { & $rmPath !Log $message }
+
+function ToRMColor([System.Drawing.Color] $color)
+{
+    $colorR = [int]$color.R
+    $colorG = [int]$color.G
+    $colorB = [int]$color.B
+    $colorA = [int]$color.A
+    return "$colorR,$colorG,$colorB,$colorA"
+}
+
+function ToSDColor([string] $color)
+{
+    $colors = $color.Split(',')
+    return [System.Drawing.Color]::FromArgb($colors[3], $colors[0], $colors[1], $colors[2])
+}
+
+
 # Window Settings
-$form                               = New-Object system.Windows.Forms.Form
-$form.ClientSize                    = '260,175'
-$form.text                          = $v["Config"]
-$form.TopMost                       = $false
-$form.Icon                          = [Drawing.Icon]::ExtractAssociatedIcon($rmPath)
-$form.AutoSize                      = $false
-$form.FormBorderStyle               = [System.Windows.Forms.FormBorderStyle]::FixedSingle
-$form.ShowInTaskbar                 = $false
-$form.MinimizeBox                   = $false
-$form.MaximizeBox                   = $false
-$form.Font                          = 'Arial,9'
+$form                   = New-Object system.Windows.Forms.Form
+$form.Size              = '435, 215'
+$form.Text              = $v['Config']
+$form.TopMost           = $false
+$form.Icon              = [Drawing.Icon]::ExtractAssociatedIcon($rmPath)
+$form.AutoSize          = $false
+$form.FormBorderStyle   = [System.Windows.Forms.FormBorderStyle]::FixedSingle
+$form.ShowInTaskbar     = $false
+$form.MinimizeBox       = $false
+$form.MaximizeBox       = $false
+$form.Font              = 'Arial,8'
 
 ### <MediaPlayer> ###
     # MediaPlayer
-    $lblPlayer                      = New-Object system.Windows.Forms.Label
-    $lblPlayer.text                 = "Media Player:"
-    $lblPlayer.AutoSize             = $true
-    $lblPlayer.width                = 25
-    $lblPlayer.height               = 10
-    $lblPlayer.location             = New-Object System.Drawing.Point(10,10)
+    $lblPlayer           = New-Object system.Windows.Forms.Label
+    $lblPlayer.text      = 'Media Player:'
+    $lblPlayer.AutoSize  = $true
+    $lblPlayer.Location  = '10, 10'
+    $lblPlayer.TextAlign = $defaultFontAlign
 
-    $cbPlayer                       = New-Object System.Windows.Forms.ComboBox
-    $cbPlayer.width                 = 100
-    $cbPlayer.height                = 20
-    $cbPlayer.location              = New-Object System.Drawing.Point(150,8)
-    $cbPlayer.Font                  = 'Microsoft Sans Serif,8'
-    $cbPlayer.DropDownStyle         = 'DropDownList'
+    $cbPlayer               = New-Object System.Windows.Forms.ComboBox
+    $cbPlayer.Size          = '100, 20'
+    $cbPlayer.Location      = '150, 8'
+    $cbPlayer.DropDownStyle = 'DropDownList'
     $cbPlayer.Items.AddRange(@('Spotify','Spotify (Now Playing)','Web','WMP','iTunes'))
-    $cbPlayer.SelectedItem          = $v["playerName"]
+    $cbPlayer.SelectedItem  = $v['playerName']
 
-    # Chameleon Colors
-    $cbChameleon                    = New-Object system.Windows.Forms.CheckBox
-    $cbChameleon.text               = "Chameleon Colors"
-    $cbChameleon.AutoSize           = $true
-    $cbChameleon.width              = 100
-    $cbChameleon.height             = 20
-    $cbChameleon.location           = New-Object System.Drawing.Point(10,35)
-    $cbChameleon.Checked            = [int]$v["Chameleon"]
-    $cbChameleon.Enabled            = $false
+    # Tooltip
+    $cbTooltip          = New-Object system.Windows.Forms.CheckBox
+    $cbTooltip.Text     = 'Full Song Info Tooltip'
+    $cbTooltip.AutoSize = $true
+    $cbTooltip.Location = '10, 35'
+    $cbTooltip.Checked  = [int]$v['ToolTips']
 
     # Scale
-    $lblImageSize                   = New-Object system.Windows.Forms.Label
-    $lblImageSize.text              = "Image Scale:"
-    $lblImageSize.AutoSize          = $true
-    $lblImageSize.width             = 25
-    $lblImageSize.height            = 10
-    $lblImageSize.location          = New-Object System.Drawing.Point(10,65)
+    $lblImageSize           = New-Object system.Windows.Forms.Label
+    $lblImageSize.Text      = 'Image Scale:'
+    $lblImageSize.AutoSize  = $true
+    $lblImageSize.Location  = '10, 60'
+    $lblImageSize.TextAlign = $defaultFontAlign
 
-    $numImageSize                   = New-Object PSForms.NumericUpDownX
-    $numImageSize.AutoSize          = $true
-    $numImageSize.width             = 100
-    $numImageSize.height            = 10
-    $numImageSize.location          = New-Object System.Drawing.Point(150,63)
-    $numImageSize.Font              = 'Microsoft Sans Serif,8'
-    $numImageSize.DecimalPlaces     = 0
-    $numImageSize.Minimum           = 10
-    $numImageSize.Maximum           = 1000
-    $numImageSize.Value             = $v["CoverSize"]
+    $numImageSize               = New-Object PSForms.NumericUpDownX
+    $numImageSize.Size          = '100, 20'
+    $numImageSize.Location      = '150, 58'
+    $numImageSize.DecimalPlaces = 0
+    $numImageSize.Minimum       = 10
+    $numImageSize.Maximum       = 1000
+    $numImageSize.Value         = $v['CoverSize']
 
     # Info Orientation
-    $lblOri                         = New-Object system.Windows.Forms.Label
-    $lblOri.text                    = "Orientation:"
-    $lblOri.AutoSize                = $true
-    $lblOri.width                   = 25
-    $lblOri.height                  = 10
-    $lblOri.location                = New-Object System.Drawing.Point(10,95)
+    $lblOri           = New-Object system.Windows.Forms.Label
+    $lblOri.Text      = 'Orientation:'
+    $lblOri.AutoSize  = $true
+    $lblOri.Location  = '10, 90'
+    $lblOri.TextAlign = $defaultFontAlign
 
-    $cbOri                          = New-Object System.Windows.Forms.ComboBox
-    $cbOri.width                    = 100
-    $cbOri.height                   = 20
-    $cbOri.location                 = New-Object System.Drawing.Point(150,93)
-    $cbOri.Font                     = 'Microsoft Sans Serif,8'
-    $cbOri.DropDownStyle            = 'DropDownList'
-    $cbOri.Items.AddRange(@('Horizontal','Vertical')) #,'Center (WIP)'))
-    $cbOri.SelectedItem             = $v["Orientation"]
+    $cbOri                  = New-Object System.Windows.Forms.ComboBox
+    $cbOri.Size             = '100, 20'
+    $cbOri.Location         = '150, 88'
+    $cbOri.DropDownStyle    = 'DropDownList'
+    $cbOri.Items.AddRange(@('Horizontal','Vertical'))
+    $cbOri.SelectedItem     = $v['Orientation']
 
     # Info Direction
-    $cbDir                          = New-Object system.Windows.Forms.CheckBox
-    $cbDir.text                     = "Invert Direction"
-    $cbDir.AutoSize                 = $true
-    $cbDir.width                    = 100
-    $cbDir.height                   = 20
-    $cbDir.location                 = New-Object System.Drawing.Point(10,115)
-    $cbDir.Checked                  = [int]$v["Direction"]
+    $cbDir          = New-Object system.Windows.Forms.CheckBox
+    $cbDir.Text     = 'Invert Direction'
+    $cbDir.Location = '10, 110'
+    $cbDir.Checked  = [int]$v['Direction']
 
     # AutoHide
-    $cbHide                         = New-Object System.Windows.Forms.CheckBox
-    $cbHide.text                    = "Auto-Hide Cover"
-    $cbHide.AutoSize                = $true
-    $cbHide.width                   = 100
-    $cbHide.height                  = 20
-    $cbHide.location                = New-Object System.Drawing.Point(138, 115)
-    $cbHide.Checked                 = [int]$v["autohide"]
+    $cbHide             = New-Object System.Windows.Forms.CheckBox
+    $cbHide.Text        = 'Auto-Hide Cover'
+    $cbHide.AutoSize    = $true
+    $cbHide.Location    = '138, 115'
+    $cbHide.Checked     = [int]$v['AutoHide']
 ### <MediaPlayer/>
 
-# Apply Button
-$btnApply                           = New-Object system.Windows.Forms.Button
-$btnApply.text                      = "Apply"
-$btnApply.width                     = 240
-$btnApply.height                    = 30
-$btnApply.location                  = New-Object System.Drawing.Point(10,135)
-$btnApply.Add_Click({ applyClick })
+### <Color>
+    # Chameleon Colors
+    $cbChameleon            = New-Object system.Windows.Forms.CheckBox
+    $cbChameleon.Text       = 'Default Colors'
+    $cbChameleon.AutoSize   = $true
+    $cbChameleon.Location   = '260, 35'
+    $cbChameleon.Checked    = [int]$v['DefaultColors']
+    $cbChameleon.Add_CheckedChanged({ toggleCustomColors })
 
-### <Helper Functions> ###
-    function WriteKeyValue([string] $key, [string] $value)
+    $dpObjectColor               = New-Object System.Windows.Forms.ComboBox
+    $dpObjectColor.Size          = '150, 20'
+    $dpObjectColor.Location      = '260, 55'
+    $dpObjectColor.DropDownStyle = 'DropDownList'
+    $dpObjectColor.Enabled        = -NOT $cbChameleon.Checked
+    $dpObjectColor.Add_SelectedIndexChanged({ colorObjectDPSelection })
+    $dpObjectColor.Items.AddRange(@('Artist','Track','Progress Background', 'Progress Foreground'))
+    $dpObjectColor.SelectedIndex = 0
+
+    # Populate the custom color panels
+    $colorPanels = [System.Collections.ArrayList]::new()
+    for ($i = 0; $i -lt $colorObjectCount; ++$i)
     {
-        $wpps::WritePrivateProfileString("Variables", $key, $value, $variablesPath)
+        $btnColor           = New-Object system.Windows.Forms.Panel
+        $btnColor.Size      = '150, 20'
+        $btnColor.Location  = '260, 105'
+        $btnColor.Enabled   = -NOT $cbChameleon.Checked
+        $btnColor.Add_Click( { ColorPicker } )
+
+        # Set the appropriate color
+        if ($v['Color' + ($i + 1) + 'Chameleon'] -eq 1) { $btnColor.BackColor = ToSDColor '255,255,255,255' }
+        else { $btnColor.BackColor = ToSDColor $v['Color' + ($i + 1)] }
+
+        # Set all but the first panel to invisible
+        if ($i -ne 0) { $btnColor.visible = $false }
+
+        $colorPanels.Add($btnColor)
     }
 
-    function CommandMeasure([string] $measure, [string] $arguments, [string] $config)
+    # Color Label
+    $lblColor           = New-Object system.Windows.Forms.Label
+    $lblColor.Text      = 'Color:'
+    $lblColor.Size      = '35, 20'
+    $lblColor.Location  = '260, 105'
+    $lblColor.TextAlign = 'MiddleLeft'
+    $lblColor.Enabled   = -NOT $cbChameleon.Checked
+
+    # Possible Chameleon options
+    $colorOptions = @(
+        '[MeasureCoverFG2]',
+        '[MeasureCoverBG2]',
+        '[MeasureDesktopFG2]',
+        '[MeasureDesktopBG1]',
+        '[MeasureDesktopAvrg]',
+        '[MeasureCoverAvrg]',
+        'Custom'
+    )
+
+    $dpsColorOptions = [System.Collections.ArrayList]::new()
+    for ($i = 0; $i -lt $colorObjectCount; ++$i)
     {
-        & $rmPath !CommandMeasure "$measure" "$arguments" "$config"
+        # Dropdown for color options
+        $dpColorOptions               = New-Object System.Windows.Forms.ComboBox
+        $dpColorOptions.Size          = '150, 20'
+        $dpColorOptions.Location      = '260, 80'
+        $dpColorOptions.DropDownStyle = 'DropDownList'
+        $dpColorOptions.Enabled       = -NOT $cbChameleon.Checked
+        $dpColorOptions.Add_SelectedIndexChanged({ colorDPSelection })
+        $dpColorOptions.Items.AddRange(@(
+            'Cover Foreground',
+            'Cover Background',
+            'Cover Average'
+            'Desktop Foreground',
+            'Desktop Background',
+            'Desktop Average'
+            'Custom'
+        ))
+
+        # Default to custom color
+        $dpColorOptions.SelectedItem = 'Custom'
+
+        if ($v['Color'+($i+1)+'Chameleon'] -eq 1)
+        {
+            # Set the correct chameleon type
+            $dpColorOptions.SelectedIndex = [array]::IndexOf($colorOptions, $v['Color' + ($i+1)])
+            $colorPanels[$i].Visible      = $false
+
+            if ($i -eq 0) { $lblColor.Visible = $false }
+        }
+
+        if ($i -ne 0) { $dpColorOptions.Visible = $false }
+
+        $dpsColorOptions.Add($dpColorOptions)
+    }
+
+    function ColorDPSelection
+    {
+        # Default is visible
+        $isVisible = $true
+
+        # If something other then custom is selected then hide the custom colors
+        if (-NOT $dpsColorOptions[$dpObjectColor.SelectedIndex].SelectedItem.Equals('Custom')) {
+            $isVisible = $false
+        }
+
+        # Set the state
+        $lblColor.Visible = $isVisible
+        $colorPanels[$dpObjectColor.SelectedIndex].Visible = $isVisible
+    }
+
+    # Color picker window
+    $colorPicker              = New-Object System.Windows.Forms.ColorDialog
+    $colorPicker.CustomColors = $true
+    $colorPicker.FullOpen     = $true
+    function ColorPicker
+    {
+        # Open the color picker and wait for it to close
+        if ($colorPicker.ShowDialog() -eq 1) {
+            # Save the new color in the correct panel
+            $colorPanels[$dpObjectColor.SelectedIndex].BackColor = $colorPicker.Color
+        }
+    }
+
+    function ColorObjectDPSelection
+    {
+        # Loop through every color panel
+        for ($i = 0; $i -lt $colorPanels.Count; ++$i)
+        {
+            # Disable all other color panels
+            $colorPanels[$i].Visible     = $false
+            $dpsColorOptions[$i].Visible = $false
+
+            if ($dpObjectColor.SelectedIndex -eq $i)
+            {
+                # Enable the current color option dropdown
+                $dpsColorOptions[$i].Visible = $true
+
+                # Enable/Disable the color panel and label
+                ColorDPSelection
+            }
+        }
+    }
+
+    function ToggleCustomColors
+    {
+        # Get the default colors checked status
+        $val = -NOT $cbChameleon.Checked
+
+        # Enable/disable user defined color UI elements accordingly
+        $dpObjectColor.Enabled = $val
+        $lblColor.Enabled      = $val
+        foreach ($btnColor in $colorPanels)           { $btnColor.Enabled = $val }
+        foreach ($dpColorOptions in $dpsColorOptions) { $dpColorOptions.Enabled = $val }
+    }
+### <Color/>
+
+# Apply Button
+$btnApply           = New-Object system.Windows.Forms.Button
+$btnApply.Text      = 'Apply'
+$btnApply.Size      = [string]($form.Width - 35) + ', 30'
+$btnApply.Location  = '10, ' + [string]($form.Height - 75)
+$btnApply.Add_Click({ ApplyClick })
+
+### <Helper Functions> ###
+    function WriteKeyValue([string] $key, [string] $value) {
+        $wpps::WritePrivateProfileString('Variables', $key, $value, $variablesPath)
     }
 
     function MediaPlayer
@@ -223,29 +376,31 @@ $btnApply.Add_Click({ applyClick })
         WriteKeyValue playerPlugin 'NowPlaying'
         WriteKeyValue playerEXE '%userprofile%\AppData\Roaming\Spotify\Spotify.exe'
         WriteKeyValue ImageName 'spotify.png'
-        WriteKeyValye likeVal "SetRating 5"
+        WriteKeyValye likeVal 'SetRating 5'
         WriteKeyValue noLikeVal "SetRating 0"
         WriteKeyValue heartTint 1DB954
 
-        if($cbPlayer.SelectedItem.equals("Spotify"))
+        if ($cbPlayer.SelectedItem.Equals('Spotify'))
         {
             # This is the WebNowPlaying version of Spotify
             WriteKeyValue playerPlugin 'Web'
-
-        } elseif ($cbPlayer.SelectedItem.equals("Web"))
+        }
+        elseif ($cbPlayer.SelectedItem.Equals('Web'))
         {
             WriteKeyValue playerName 'Web'
             WriteKeyValue playerPlugin 'Web'
             WriteKeyValue playerEXE ''
             WriteKeyValue ImageName 'Web.png'
             WriteKeyValue heartTint 2870B8
-        } elseif ($cbPlayer.SelectedItem.equals("WMP"))
+        }
+        elseif ($cbPlayer.SelectedItem.Equals('WMP'))
         {
             WriteKeyValue playerName 'WMP'
             WriteKeyValue playerEXE 'wmplayer.exe'
             WriteKeyValue ImageName 'WMP.png'
             WriteKeyValue heartTint 2870B8
-        } elseif ($cbPlayer.SelectedItem.equals("iTunes"))
+        }
+        elseif ($cbPlayer.SelectedItem.Equals('iTunes'))
         {
             WriteKeyValue playerName 'iTunes'
             WriteKeyValue playerEXE 'iTunes.exe'
@@ -254,50 +409,122 @@ $btnApply.Add_Click({ applyClick })
         }
     }
 
-    function applyClick
+    function ApplyColors
     {
-        #$doChameleon = [int]$cbChameleon.Checked
-        #WriteKeyValue Chameleon $doChameleon
+        # Default color theme
+        $defaultColors = @(
+            '255,255,255,255',
+            '255,255,255,255',
+            '[MeasureCoverBG2]',
+            '[MeasureCoverFG2]'
+        )
+        $defaultChmlns = @(0, 0, 1, 1)
+
+        # Loop through each colorable meter
+        for ($i = 0; $i -lt $colorObjectCount; ++$i)
+        {
+            # Set the defaults
+            $color = $defaultColors[$i]
+            $chmln = $defaultChmlns[$i]
+
+            # If the Default Colors is checked then override default colors
+            if (-NOT $cbChameleon.Checked)
+            {
+                # If color option not Custom, then it's a chameleon color
+                if (-NOT $dpsColorOptions[$i].SelectedItem.Equals('Custom'))
+                {
+                    # Set the color and chameleon flag
+                    $color = $colorOptions[$dpsColorOptions[$i].SelectedIndex]
+                    $chmln = 1
+                }
+                # Custom color
+                else
+                {
+                    $color = ToRMColor $colorPanels[$i].BackColor
+                    $chmln = 0
+                }
+            }
+
+            WriteKeyValue ('Color'+($i+1)) $color
+            WriteKeyValue ('Color'+($i+1)+'Chameleon') $chmln
+        }
+    }
+
+    function ApplyClick
+    {
+        WriteKeyValue DefaultColors ([int]$cbChameleon.Checked)
+        WriteKeyValue ToolTips ([int]$cbTooltip.Checked)
+        WriteKeyValue Direction ([int]$cbDir.Checked)
+        WriteKeyValue CoverSize $numImageSize.Value
+        WriteKeyValue AutoHide ([int]$cbHide.Checked)
+
+        # Set the tooltips
+        if ($cbTooltip.Checked)
+        {
+            WriteKeyValue ArtistToolTip "[MeasureArtistFull]"
+            WriteKeyValue TrackToolTip "[MeasureTrackFull]"
+        }
+        else
+        {
+            WriteKeyValue ArtistToolTip ""
+            WriteKeyValue TrackToolTip ""
+        }
 
         # Set the media player data
         MediaPlayer
 
-        $doInvert = [int]$cbDir.Checked
-        WriteKeyValue Direction $doInvert
-
         # Set the direction
         WriteKeyValue Orientation $cbOri.SelectedItem
-        if ($cbOri.SelectedItem.equals("Vertical")) {
-            WriteKeyValue Justify "Center"
-            WriteKeyValue Origin "(#Width#*0.5)"
-            WriteKeyValue CoverOrigin "(#Origin#-#CoverSize#*0.5)"
-        } else
+        if ($cbOri.SelectedItem.Equals('Vertical'))
         {
-            if ($cbDir.Checked) {
-                WriteKeyValue Justify "Right"
-                WriteKeyValue Origin "(#CoverSize#*6)"
+            WriteKeyValue Justify 'Center'
+            WriteKeyValue Origin '(#Width#*0.5)'
+            WriteKeyValue CoverOrigin '(#Origin#-#CoverSize#*0.5)'
+        }
+        else
+        {
+            if ($cbDir.Checked)
+            {
+                WriteKeyValue Justify 'Right'
+                WriteKeyValue Origin '(#CoverSize#*6)'
             }
-            else {
-                WriteKeyValue Justify "Left"
+            else
+            {
+                WriteKeyValue Justify 'Left'
                 WriteKeyValue Origin 0
             }
 
-            WriteKeyValue CoverOrigin "#Origin#"
+            WriteKeyValue CoverOrigin '#Origin#'
         }
 
-        # Set the cover size
-        WriteKeyValue CoverSize $numImageSize.Value
-
-        $doHide = [int]$cbHide.Checked
-        WriteKeyValue autohide $doHide
+        # Set the colors
+        ApplyColors
 
         # Refresh the skin
-        & $rmPath !RefreshGroup "Simply"
+        & $rmPath !Refresh 'Simply'
     }
 ### <HelperFunctions/> ###
 
-$form.controls.AddRange(@($lblPlayer,$cbPlayer,$cbChameleon,$lblOri,$cbOri,$lblImageSize,$numImageSize,$cbDir,$cbHide,$btnApply))
+[System.Collections.ArrayList] $UIElements = @(
+    $lblPlayer,
+    $cbPlayer,
+    $cbTooltip,
+    $cbChameleon,
+    $lblColor,
+    $dpObjectColor,
+    $lblOri,
+    $cbOri,
+    $lblImageSize,
+    $numImageSize,
+    $cbDir,
+    $cbHide,
+    $btnApply
+)
 
+foreach ($dummy in $colorPanels)     { $UIElements.Add($dummy) }
+foreach ($dummy in $dpsColorOptions) { $UIElements.Add($dummy) }
+
+$form.controls.AddRange($UIElements)
 $form.ResumeLayout()
 
 [Windows.Forms.Application]::Run($form)

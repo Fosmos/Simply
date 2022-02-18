@@ -3,66 +3,83 @@ Measure=Plugin
 Plugin=Chameleon
 Type=File
 Path=[MeasureCover]
+UpdateDivider=50
 
-[MeasureAverage]
+[MeasureCoverAvrg]
 Measure=Plugin
 Plugin=Chameleon
 Parent=MeasureGetCoverColor
 Format=Dec
 Color=Average
+UpdateDivider=50
 
-[MeasureBackground]
+[MeasureCoverBG1]
 Measure=Plugin
 Plugin=Chameleon
 Parent=MeasureGetCoverColor
 Format=Dec
 Color=Background1
+UpdateDivider=50
 
-[MeasureBackground2]
+[MeasureCoverBG2]
 Measure=Plugin
 Plugin=Chameleon
 Parent=MeasureGetCoverColor
 Format=Dec
 Color=Background2
+UpdateDivider=50
 
-[MeasureForeground]
+[MeasureCoverFG1]
 Measure=Plugin
 Plugin=Chameleon
 Parent=MeasureGetCoverColor
 Format=Dec
 Color=Foreground1
+UpdateDivider=50
 
-[MeasureForeground2]
+[MeasureCoverFG2]
 Measure=Plugin
 Plugin=Chameleon
 Parent=MeasureGetCoverColor
 Format=Dec
 Color=Foreground2
+UpdateDivider=50
 
-[MeasureLight]
+; Desktop
+[MeasureDesktopColor]
 Measure=Plugin
 Plugin=Chameleon
-Parent=MeasureGetCoverColor
-Format=Dec
-Color=Light2
+Type=Desktop
+UpdateDivider=100
 
-[MeasurerLight2]
+[MeasureDesktopFG1]
 Measure=Plugin
 Plugin=Chameleon
-Parent=MeasureGetCoverColor
+Parent=MeasureDesktopColor
 Format=Dec
-Color=Light2
+Color=Foreground1
+UpdateDivider=100
 
-[MeasureDark]
+[MeasureDesktopFG2]
 Measure=Plugin
 Plugin=Chameleon
-Parent=MeasureGetCoverColor
+Parent=MeasureDesktopColor
 Format=Dec
-Color=Dark1
+Color=Foreground2
+UpdateDivider=100
 
-[MeasureLuminance]
+[MeasureDesktopBG1]
 Measure=Plugin
 Plugin=Chameleon
-Parent=MeasureGetCoverColor
+Parent=MeasureDesktopColor
 Format=Dec
-Color=Luminance
+Color=Background2
+UpdateDivider=100
+
+[MeasureAverage]
+Measure=Plugin
+Plugin=Chameleon
+Parent=MeasureDesktopColor
+Format=Dec
+Color=Average
+UpdateDivider=100
