@@ -11,24 +11,22 @@ A simple media player built from the ground up using ideas found in many other s
 * Once installed (https://github.com/Fosmos/Simply/releases) run the Cover skin
 * Right-Click the skin and select 'Settings'
 * When you are satisfied with the settings select 'Apply' and your changes should be reflected
-  - Chameleon Colors is currently in development so you can't change it's status
   - 'Spotify' uses the WebNowPlaying plugin and will only work with spotify open in a browser or using the .exe desktop app (more on this further down)
 * That's it, everything should be working now 😄
 ## Features
 * Supports multiple media players
 * Album cover slides into view when hovering over skin
-* Progress bar (Colors match album cover)
+* Progress bar(s)
+* Customizable colors
 * Media controls
 * Ability to 💚 songs
 
 ![](https://i.ibb.co/yknzsGG/player-animated.gif)
 
 ## Supported Players
-* Google Music Desktop Player (aka → GPMDP)
-  - Fully supported and tested
 * iTunes (only tested on store app version)
-  - Supports everything but the 'heart' feature
-* Windows Media Player (aka → WMP)
+  - Supports everything but the '❤️' feature
+* Windows Media Player (WMP)
   - Should be supported but untested
 * Web
   - Requires rainmeter extension on Chrome and Edge (Chromium) (https://chrome.google.com/webstore/detail/webnowplaying-companion/jfakgfcdgpghbbefmdfjkbdlibjgnbli)
