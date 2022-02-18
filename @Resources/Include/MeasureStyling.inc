@@ -52,6 +52,14 @@ Plugin=Chameleon
 Type=Desktop
 UpdateDivider=100
 
+[MeasureDesktopAvrg]
+Measure=Plugin
+Plugin=Chameleon
+Parent=MeasureDesktopColor
+Format=Dec
+Color=Average
+UpdateDivider=100
+
 [MeasureDesktopFG1]
 Measure=Plugin
 Plugin=Chameleon
@@ -73,13 +81,13 @@ Measure=Plugin
 Plugin=Chameleon
 Parent=MeasureDesktopColor
 Format=Dec
-Color=Background2
+Color=Background1
 UpdateDivider=100
 
-[MeasureAverage]
+[MeasureDesktopBG2]
 Measure=Plugin
 Plugin=Chameleon
 Parent=MeasureDesktopColor
 Format=Dec
-Color=Average
+Color=Background2
 UpdateDivider=100

@@ -250,12 +250,16 @@ $form.Font              = 'Arial,8'
 
     # Possible Chameleon options
     $colorOptions = @(
+        '[MeasureCoverFG1]',
         '[MeasureCoverFG2]',
+        '[MeasureCoverBG1]',
         '[MeasureCoverBG2]',
+        '[MeasureCoverAvrg]',
+        '[MeasureDesktopFG1]',
         '[MeasureDesktopFG2]',
         '[MeasureDesktopBG1]',
+        '[MeasureDesktopBG2]',
         '[MeasureDesktopAvrg]',
-        '[MeasureCoverAvrg]',
         'Custom'
     )
 
@@ -271,10 +275,14 @@ $form.Font              = 'Arial,8'
         $dpColorOptions.Add_SelectedIndexChanged({ colorDPSelection })
         $dpColorOptions.Items.AddRange(@(
             'Cover Foreground',
+            'Cover Foreground 2',
             'Cover Background',
+            'Cover Background 2',
             'Cover Average'
             'Desktop Foreground',
+            'Desktop Foreground 2',
             'Desktop Background',
+            'Desktop Background 2',
             'Desktop Average'
             'Custom'
         ))

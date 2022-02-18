@@ -39,19 +39,18 @@ Width=(#CoverSize#*7)
 Height=(#CoverSize#)
 Origin=(#CoverSize#*6)
 CoverOrigin=#Origin#
-Background=[MeasureBackground]
-Foreground=[MeasureForeground]
-DefaultColors=1
 
 ; Heart
 likeVal=SetRating 5
 noLikeVal=SetRating 0
 heartTint=1DB954
 
+; Rainmeter variables
 SkinGroup=Simply
 Config=Simply
 
 ; Colors
+DefaultColors=1
 Color1=255,255,255,255
 Color1Chameleon=0
 Color2=255,255,255,255
