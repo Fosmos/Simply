@@ -45,7 +45,7 @@ Plugin=WebNowPlaying
 PlayerType=Artist
 RegExpSubstitute=1
 ;; Removes anything followed by a '-' or '&' (except for 'country' and 'free') or 'feat.' or 'and' or ':' or '/'
-Substitute="^(?siU)^(.+)((,| -| & (?!\bcountry\b|\bfree\b)| feat.| and| :| \/).+)+$":"\1"
+Substitute="^(?siU)^(.+)((,| -| & (?!\bcountry\b|\bfree\b)| feat.| \band\b| :| \/).+)+$":"\1"
 UpdateDivider=50
 
 [MeasureArtistFull]
