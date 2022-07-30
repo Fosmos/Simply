@@ -19,8 +19,8 @@ function Initialize()
         -- Only 1 progress bar in horizontal mode
         table.insert(meters, 'ProgressBar')
 
-        SKIN:Bang('!SetOption', 'ProgressBar', 'DynamicVariables', 1)
-        SKIN:Bang('!SetOption', 'ProgressBar', 'UpdateDivider', 20)
+        SKIN:Bang('!SetOption', 'ProgressBar', 'DynamicVariables',  1)
+        SKIN:Bang('!SetOption', 'ProgressBar', 'UpdateDivider',     20)
 
         count = 11
     else
@@ -29,9 +29,9 @@ function Initialize()
         table.insert(meters, 'ProgressBarL')
 
         SKIN:Bang('!SetOption', 'ProgressBarR', 'DynamicVariables', 1)
-        SKIN:Bang('!SetOption', 'ProgressBarR', 'UpdateDivider', 20)
+        SKIN:Bang('!SetOption', 'ProgressBarR', 'UpdateDivider',    20)
         SKIN:Bang('!SetOption', 'ProgressBarL', 'DynamicVariables', 1)
-        SKIN:Bang('!SetOption', 'ProgressBarL', 'UpdateDivider', 20)
+        SKIN:Bang('!SetOption', 'ProgressBarL', 'UpdateDivider',    20)
 
         count = 12
     end
@@ -184,10 +184,15 @@ function setState(isHover)
 end
 
 function updatePaused()
+    -- Music is paused
     if playpause:GetValue() == 2 then
         if state ~= 'paused_Hover' then
             state = 'paused'
         end
+    -- Nothing is playing
+    elseif playpause:GetValue() == 0 then
+            state = 'paused'
+    -- Music is playing
     else
         if state ~= 'playing_Hover' then
             state = 'playing'
