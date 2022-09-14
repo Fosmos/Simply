@@ -10,7 +10,7 @@ Justify=Right
 ; e.g., Say the track name is "To the Moon and Back (Feat. Gustave)"
 ; Having 'Feat' in this list will cut the name to just "To the Moon and Back"
 ; This is still in development, so it's not perfect
-REGEX="Remix|From|Feat|Acoustic Version|EP|With|Album Version|Writing Session|Medley|Single|Take|Solo|Instrumental|Radio Edit|Bonus Track|Acoustic|Remastered|New|Remaster|Edit|b-side|Live|\+"
+REGEX="From|Feat|Acoustic Version|EP|With|Album Version|Writing Session|Medley|Single|Take|Solo|Instrumental|Radio Edit|Bonus Track|Acoustic|Remastered|New|19|Demo|b-side|Extended|Tribute|\+"
 
 ; ---------------------
 ; --- DON'T TOUCH!! ---
@@ -34,7 +34,7 @@ Orientation=Horizontal
 AutoHide=1
 
 ; Cover Variables (Auto-set in settings)
-CoverSize=125
+CoverSize=90
 Width=(#CoverSize#*7)
 Height=(#CoverSize#)
 Origin=(#CoverSize#*6)
