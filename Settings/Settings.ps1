@@ -196,7 +196,7 @@ $form.Font              = 'Arial,8'
 
     # AutoHide
     $cbHide             = New-Object System.Windows.Forms.CheckBox
-    $cbHide.Text        = 'Auto-Hide Cover'
+    $cbHide.Text        = 'Auto-Hide'
     $cbHide.AutoSize    = $true
     $cbHide.Location    = '138, 115'
     $cbHide.Checked     = [int]$v['AutoHide']
@@ -488,6 +488,12 @@ $btnApply.Add_Click({ ApplyClick })
             WriteKeyValue Justify 'Center'
             WriteKeyValue Origin '(#Width#*0.5)'
             WriteKeyValue CoverOrigin '(#Origin#-#CoverSize#*0.5)'
+
+            if ($cbHide.Checked) {
+                WriteKeyValue Height '(#CoverSize#)'
+            } else {
+                WriteKeyValue Height '(#CoverSize#*2)'
+            }
         }
         else
         {
@@ -503,6 +509,7 @@ $btnApply.Add_Click({ ApplyClick })
             }
 
             WriteKeyValue CoverOrigin '#Origin#'
+            WriteKeyValue Height '(#CoverSize#)'
         }
 
         # Set the colors

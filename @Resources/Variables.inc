@@ -10,7 +10,7 @@ Justify=Right
 ; e.g., Say the track name is "To the Moon and Back (Feat. Gustave)"
 ; Having 'Feat' in this list will cut the name to just "To the Moon and Back"
 ; This is still in development, so it's not perfect
-REGEX="From|Feat|Acoustic Version|EP|With|Album Version|Writing Session|Medley|Single|Take|Solo|Instrumental|Radio Edit|Bonus Track|Acoustic|Remastered|New|19|Demo|b-side|Extended|Tribute|\+"
+REGEX="From|Feat|Acoustic Version|EP|With|Album Version|Writing Session|Medley|Single|Take|Solo|Instrumental|Radio Edit|Bonus Track|Acoustic|Remastered|New|19|Demo|b-side|Extended|Tribute|Digital Remaster|\+"
 
 ; ---------------------
 ; --- DON'T TOUCH!! ---

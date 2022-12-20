@@ -1,6 +1,4 @@
 function Initialize()
-    -- print("Initializing..")
-
     coverSize   = tonumber(SKIN:GetVariable('CoverSize')) -- User specified skin size
     skinwidth   =  coverSize * 7 -- Since the 'Width' variable has a variable in it, Lua can't get that number so I'm harcoding it here
     divider     = 5 -- Update speed
@@ -21,8 +19,8 @@ function Initialize()
         -- Only 1 progress bar in horizontal mode
         table.insert(meters, 'ProgressBar')
 
-        SKIN:Bang('!SetOption', 'ProgressBar', 'DynamicVariables', 1)
-        SKIN:Bang('!SetOption', 'ProgressBar', 'UpdateDivider', 20)
+        SKIN:Bang('!SetOption', 'ProgressBar', 'DynamicVariables',  1)
+        SKIN:Bang('!SetOption', 'ProgressBar', 'UpdateDivider',     20)
 
         count = 11
     else
@@ -31,9 +29,9 @@ function Initialize()
         table.insert(meters, 'ProgressBarL')
 
         SKIN:Bang('!SetOption', 'ProgressBarR', 'DynamicVariables', 1)
-        SKIN:Bang('!SetOption', 'ProgressBarR', 'UpdateDivider', 20)
+        SKIN:Bang('!SetOption', 'ProgressBarR', 'UpdateDivider',    20)
         SKIN:Bang('!SetOption', 'ProgressBarL', 'DynamicVariables', 1)
-        SKIN:Bang('!SetOption', 'ProgressBarL', 'UpdateDivider', 20)
+        SKIN:Bang('!SetOption', 'ProgressBarL', 'UpdateDivider',    20)
 
         count = 12
     end
@@ -90,14 +88,26 @@ function Initialize()
         else
             -- Song info and progress bars
             if table_contains(importantMeters, meter:GetName()) then
-                notHover[i] = meter:GetY()
-                hover[i]    = (coverSize + 1)*direction
-                hidden[i]   = hover[i]
+                if direction == 1 and hidecover == 0 then
+                    notHover[i] = meter:GetY()
+                    hover[i]    = notHover[i]
+                    hidden[i]   = notHover[i]
+                else
+                    notHover[i] = meter:GetY()
+                    hover[i]    = meter:GetY() + (-coverSize - 1)*direction
+                    hidden[i]   = notHover[i]
+                end
             -- Cover and media controls
             else
-                notHover[i] = (-coverSize - 1)*direction
-                hover[i]    = meter:GetY()
-                hidden[i]   = notHover[i]
+                if direction == 1 and hidecover == 0 then
+                    notHover[i] = meter:GetY() + (-coverSize - 1)*direction
+                    hover[i]    = meter:GetY() + coverSize*direction
+                    hidden[i]   = notHover[i]
+                else
+                    notHover[i] = meter:GetY() + (-coverSize - 1)*direction
+                    hover[i]    = meter:GetY()
+                    hidden[i]   = notHover[i]
+                end
             end
 
         end
@@ -108,16 +118,12 @@ function Initialize()
         hidden[i]   = math.floor(hidden[i])
 
         -- Set the position
-        pos[i] = hidden[i]
+        pos[i] = notHover[i]
         UpdatePos(meter, i)
     end
-
-    -- print("Initialized")
 end
 
 function animate()
-    -- print("Animating..")
-
     for i=1, count do
         meter = meterObjs[i]
 
@@ -142,19 +148,7 @@ function animate()
             end
         -- No Auto-Hide
         else
-            -- Show everything while playing
-            if state == "playing" or state == "playing_Hover" then
-                update = InterpTowardHover(i)
-            -- Paused states
-            else
-                -- Hide the song info
-                if table_contains(importantMeters, meter:GetName()) then
-                    update = InterpTowardHidden(i)
-                -- Show the cover and media controls
-                else
-                    update = InterpTowardHover(i)
-                end
-            end
+            update = InterpTowardHover(i)
         end
 
         if table_contains(mediaControls, meter:GetName()) then
@@ -171,8 +165,6 @@ function animate()
 end
 
 function setState(isHover)
-    -- print("Setting state...")
-
     -- Mouse off of skin
     if isHover == 0 then
         state = 'playing'
@@ -189,25 +181,23 @@ function setState(isHover)
             state = 'paused_Hover'
         end
     end
-
-    -- print("SetState ->" .. state)
 end
 
 function updatePaused()
-    -- print("pause updating..." .. state)
-
-    -- print(playpause:GetValue())
-    if playpause:GetValue() == 1 then
-        if state ~= 'playing_Hover' then
-            state = 'playing'
-        end
-    else
+    -- Music is paused
+    if playpause:GetValue() == 2 then
         if state ~= 'paused_Hover' then
             state = 'paused'
         end
+    -- Nothing is playing
+    elseif playpause:GetValue() == 0 then
+            state = 'paused'
+    -- Music is playing
+    else
+        if state ~= 'playing_Hover' then
+            state = 'playing'
+        end
     end
-
-    -- print("UpdatePaused -> " .. state)
 end
 
 function getDirection()
@@ -291,7 +281,7 @@ function InterpTowardNotHover(i)
         pos[i] = notHover[i]
     end
 
-    -- print("(Interp -> Not Hover) " .. i .. ": " .. pos[i] .. " -> " .. notHover[i])
+    -- print(i .. ": " .. pos[i] .. " -> " .. notHover[i])
 
     return true
 end
@@ -305,7 +295,7 @@ function InterpTowardHover(i)
         pos[i] = hover[i]
     end
 
-    -- print("(Interp -> Hover) " .. i .. ": " .. pos[i] .. " -> " .. hover[i])
+    -- print(i .. ": " .. pos[i] .. " -> " .. hover[i])
 
     return true
 end
@@ -319,7 +309,7 @@ function InterpTowardHidden(i)
         pos[i] = hidden[i]
     end
 
-    -- print("(Inter -> Hidden) " .. i .. ": " .. pos[i] .. " -> " .. hidden[i])
+    -- print(i .. ": " .. pos[i] .. " -> " .. hidden[i])
 
     return true
 end
