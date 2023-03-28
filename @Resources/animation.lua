@@ -91,18 +91,12 @@ function Initialize()
 
                     -- Position to shift info towards
                     hover[i]  = notHover[i] - (coverSize*direction)
-                    hidden[i] = skinwidth * 2 * direction
+                    hidden[i] = (skinwidth + hover[i]) * direction
                 -- Cover and media controls
                 else
-                    -- All the other objects
-                    if direction == 1 then
-                        notHover[i] = skinwidth + 1 -- Shift the elements right
-                    else
-                        notHover[i] = -(coverSize + 1) -- Shift them left
-                    end
-
-                    hover[i] = meter:GetX()
-                    hidden[i] = notHover[i]
+                    hover[i]    = meter:GetX()
+                    notHover[i] = (hover[i] + coverSize + 2) * direction
+                    hidden[i]   = notHover[i]
                 end
             -- Vertical
             else
@@ -306,7 +300,7 @@ function InterpTowardNotHover(i)
 
     pos[i] = pos[i] - (pos[i] - notHover[i])/divider
 
-    if math.abs(notHover[i] - pos[i]) < .5 then
+    if math.abs(notHover[i] - pos[i]) < .001 then
         pos[i] = notHover[i]
     end
 
@@ -320,7 +314,7 @@ function InterpTowardHover(i)
 
     pos[i] = pos[i] - (pos[i] - hover[i])/divider
 
-    if math.abs(hover[i] - pos[i]) < .5 then
+    if math.abs(hover[i] - pos[i]) < .001 then
         pos[i] = hover[i]
     end
 
@@ -334,7 +328,7 @@ function InterpTowardHidden(i)
 
     pos[i] = pos[i] - (pos[i] - hidden[i])/divider
 
-    if math.abs(hidden[i] - pos[i]) < .5 then
+    if math.abs(hidden[i] - pos[i]) < .001 then
         pos[i] = hidden[i]
     end
 
