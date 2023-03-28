@@ -200,6 +200,21 @@ $form.Font              = 'Arial,8'
     $cbHide.AutoSize    = $true
     $cbHide.Location    = '138, 115'
     $cbHide.Checked     = [int]$v['AutoHide']
+
+    # Corner Radius
+    $lblCornerRadius            = New-Object system.Windows.Forms.Label
+    $lblCornerRadius.text       = 'Cornder Radius:'
+    $lblCornerRadius.AutoSize   = $true
+    $lblCornerRadius.Location   = '260, 10'
+    $lblCornerRadius.TextAlign  = $defaultFontAlign
+
+    $numCornerRadius                = New-Object PSForms.NumericUpDownX
+    $numCornerRadius.Size           = '59, 20'
+    $numCornerRadius.Location       = '350, 10'
+    $numCornerRadius.DecimalPlaces  = 0
+    $numCornerRadius.Minimum        = 0
+    $numCornerRadius.Maximum        = 100
+    $numCornerRadius.Value          = $v['CornerRadius']
 ### <MediaPlayer/>
 
 ### <Color>
@@ -465,6 +480,7 @@ $btnApply.Add_Click({ ApplyClick })
         WriteKeyValue Direction ([int]$cbDir.Checked)
         WriteKeyValue CoverSize $numImageSize.Value
         WriteKeyValue AutoHide ([int]$cbHide.Checked)
+        WriteKeyValue CornerRadius $numCornerRadius.Value
 
         # Set the tooltips
         if ($cbTooltip.Checked)
@@ -533,7 +549,9 @@ $btnApply.Add_Click({ ApplyClick })
     $numImageSize,
     $cbDir,
     $cbHide,
-    $btnApply
+    $btnApply,
+    $lblCornerRadius,
+    $numCornerRadius
 )
 
 foreach ($dummy in $colorPanels)     { $UIElements.Add($dummy) }

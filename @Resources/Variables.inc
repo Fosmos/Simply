@@ -39,6 +39,7 @@ Width=(#CoverSize#*7)
 Height=(#CoverSize#)
 Origin=(#CoverSize#*6)
 CoverOrigin=#Origin#
+CornerRadius=8
 
 ; Heart
 likeVal=SetRating 5
