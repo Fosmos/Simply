@@ -42,7 +42,7 @@ UpdateDivider=1
 Measure=Plugin
 Plugin=MediaPlayer
 PlayerType=Title
-OnChangeAction=[!UpdateMeterGroup SongCover][!Redraw][!Log "Changed"]
+OnChangeAction=[!UpdateMeterGroup SongCover][!Redraw]
 RegExpSubstitute=1
 ; Removes anything with () or []
 Substitute="^(?siU)^(.+) (-.*?(#REGEX#).*|(\(.*(#REGEX#)|\[.*(#REGEX#)).+)+$":"\1"
