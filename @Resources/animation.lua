@@ -183,8 +183,10 @@ function animate()
         if meterObj[3] then
             fade(meter)
         end
-
     end
+
+    -- Update all meters and redraw the skin
+    SKIN:Bang("[!UpdateMeter *][!Redraw]")
 end
 
 function setState(isHover)
@@ -343,6 +345,4 @@ function UpdatePos(meter, i)
     else
         meter:SetY(pos[i])
     end
-
-    SKIN:Bang("!UpdateMeter", meter:GetName())
 end
