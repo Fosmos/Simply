@@ -16,7 +16,6 @@ foreach ($line in $raw)
 if ($v["playerName"] -eq "") { $v["playerName"]='Spotify' }
 if ($v["playerName"] -eq "Spotify" -AND $v["playerPlugin"] -eq "NowPlaying") { $v["playerName"]="Spotify (Now Playing)" }
 $rmPath = (Get-Process "Rainmeter").Path
-& $rmPath !ActivateConfig "Simply\Dummy" "Dummy.ini"
 
 $assemblies=(
     "System", 
@@ -149,7 +148,7 @@ $form.Font              = 'Arial,8'
     $cbPlayer.Size          = '100, 20'
     $cbPlayer.Location      = '150, 8'
     $cbPlayer.DropDownStyle = 'DropDownList'
-    $cbPlayer.Items.AddRange(@('Spotify','Spotify (Now Playing)','Web','WMP','iTunes'))
+    $cbPlayer.Items.AddRange(@('Auto','Spotify','Web','WMP','iTunes'))
     $cbPlayer.SelectedItem  = $v['playerName']
 
     # Tooltip
@@ -395,8 +394,8 @@ $btnApply.Add_Click({ ApplyClick })
     function MediaPlayer
     {
         # Since there are 2 Spotify options set it as the default
-        WriteKeyValue playerName 'Spotify'
-        WriteKeyValue playerPlugin 'NowPlaying'
+        WriteKeyValue playerName 'Auto'
+        WriteKeyValue playerPlugin 'WindowsNowPlaying'
         WriteKeyValue playerEXE '%userprofile%\AppData\Roaming\Spotify\Spotify.exe'
         WriteKeyValue ImageName 'spotify.png'
         WriteKeyValye likeVal 'SetRating 5'
@@ -406,6 +405,7 @@ $btnApply.Add_Click({ ApplyClick })
         if ($cbPlayer.SelectedItem.Equals('Spotify'))
         {
             # This is the WebNowPlaying version of Spotify
+            WriteKeyValue playerName 'Spotify'
             WriteKeyValue playerPlugin 'Web'
         }
         elseif ($cbPlayer.SelectedItem.Equals('Web'))

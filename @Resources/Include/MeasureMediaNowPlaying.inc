@@ -8,12 +8,18 @@ UpdateDivider=50
 Measure=NowPlaying
 PlayerName=[MeasureTitle]
 PlayerType=State
+IfCondition=MeasureState = 1
+IfTrueAction=[!SetOption MeterPlayPause ImageName "#@#Images\pause.png"][!UpdateMeter MeterPlayPause][!CommandMeasure Animation "Execute 4"][!Redraw]
+IfFalseAction=[!SetOption MeterPlayPause ImageName "#@#Images\play.png"][!UpdateMeter MeterPlayPause][!CommandMeasure Animation "Execute 4"][!Redraw]
 UpdateDivider=20
 
 [MeasureRating]
 Measure=NowPlaying
 PlayerName=[MeasureTitle]
 PlayerType=Rating
+IfCondition=MeasureRating = 0
+IfTrueAction=[!SetOption MeterHeart ImageName "#@#Images\heart.png"][!SetOption MeterHeart ImageTint "ffffff"][!SetVariable heartRatingMode "#likeVal#"][!UpdateMeter "MeterHeart"][!Redraw]
+IfFalseAction=[!SetOption MeterHeart ImageName "#@#Images\heartFull.png"][!SetOption MeterHeart ImageTint "#heartTint#"][!SetVariable heartRatingMode "#noLikeVal#"][!UpdateMeter "MeterHeart"][!Redraw]
 UpdateDivider=50
 
 [MeasureCover]
